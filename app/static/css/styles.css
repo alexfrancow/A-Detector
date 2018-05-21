@@ -1,0 +1,28 @@
+
+
+  body{
+    position: relative;
+    background-color: #EBECED;
+  }
+
+  #mapa{
+    position: relative;
+    display: block;
+  }
+
+  #tabla{
+    position: absolute;
+    bottom: 0;
+    right: 30%;
+    left: 30%;
+  }
+
+  table{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    border-style: solid; 
+    border-collapse: collapse;
+    border-width: 1px;
+    margin-bottom: 10px;
+  }
