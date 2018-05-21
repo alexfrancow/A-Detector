@@ -10,8 +10,8 @@ from plotly.graph_objs import *
 import re
 from urllib.request import urlopen
 import numpy as np
-import psutil
 from flask import jsonify
+import urllib
 
 import pandas as pd
 from sqlalchemy import create_engine
@@ -35,8 +35,9 @@ def anomalies():
     outputLon = []
     for ip in ips:
         url = 'http://freegeoip.net/json/'+ip
-        response = urlopen(url)
-        data = json.load(response)
+        response = urllib.request.urlopen(url)
+        str_response = response.read().decode('utf-8')
+        data = json.loads(str_response)
 
         try:
             data['message']

@@ -1,0 +1,5 @@
+decorator>=4.0.6
+nbformat>=4.2
+pytz
+requests
+six

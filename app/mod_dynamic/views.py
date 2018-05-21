@@ -9,7 +9,6 @@ Autor: @alexfrancow
 #### imports ####
 #################
 
-import psutil
 from flask import jsonify, Blueprint
 
 ################
