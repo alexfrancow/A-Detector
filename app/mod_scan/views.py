@@ -13,6 +13,8 @@ import os
 from flask import Flask, jsonify, Blueprint, render_template, request, flash, redirect, url_for
 from werkzeug.utils import secure_filename
 
+from app.mod_scan.isolation_forest import isolation_forest
+
 ################
 #### config ####
 ################
@@ -20,7 +22,7 @@ from werkzeug.utils import secure_filename
 scan_blueprint = Blueprint('scan', __name__, template_folder='templates')
 
 UPLOAD_FOLDER = 'app/mod_scan/uploads'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf'])
+ALLOWED_EXTENSIONS = set(['txt', 'csv'])
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -32,9 +34,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def isolation_forest():
-    return 0
 
 ################
 #### routes ####
@@ -57,7 +56,10 @@ def scan():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect('/anomalies')
+            isolation_forest(filename)
+            #fileurl = filename.split('.')
+            #return redirect(url_for("/"+fileurl[0]))
+            return redirect("/anomalies")
     else:
         return render_template("scan.html")
 

@@ -26,14 +26,18 @@
     </div>
     <ul class="nav navbar-nav">
       <li class="active"><a href="#">Home</a></li>
-      <li><a href="/anomalies">Anomalies</a></li>
-      <li><a href="/scan">Scan It!</a></li>
-      <li><a href="#">About</a></li>
+      <li><a href="/anomalies"><span class="glyphicon glyphicon-fire"></span> Anomalies</a></li>
+      <li><a href="/scan"><span class="glyphicon glyphicon-file"></span> Scan it!</a></li>
+      <li><a href="#"><span class="glyphicon glyphicon-info-sign"></span> About</a></li>
     </ul>
   </div>
 </nav>
     {% block content %}{% endblock %}
     </body>
+    <footer>
+    <div class="navbar-default navbar-fixed-bottom">
+    <p align="center">@alexfrancow</p>
+    </div>
     {% block footer %}{% endblock %}
-
+    </footer>
 </html>
