@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block title %}Anomalies{% endblock %}
+{% block content %}
+
+<form method="post" enctype="multipart/form-data" action="/scan">
+    <input type="file" name="file">
+    <input type="submit" value="Upload">
+</form>
+
+{% endblock %}
