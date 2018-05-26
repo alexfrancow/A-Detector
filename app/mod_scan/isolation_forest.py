@@ -39,14 +39,14 @@ def isolation_forest(filename):
     df['count'] = 1
     dataGroup2 = df.groupby(['ipdst','proto']).resample('5S', on='time').sum().reset_index().dropna()
     pd.options.display.float_format = '{:,.0f}'.format
-    dataGroup2 = dataGroup2.head()[['ipdst','proto','time','count']]
+    dataGroup2 = dataGroup2[['ipdst','proto','time','count']]
     dataNorm = dataGroup2.copy()
     dataNorm['count_n'] = (dataGroup2['count'] - dataGroup2['count'].min()) / (dataGroup2['count'].max() - dataGroup2['count'].min())
-    dataNorm = dataNorm.head()
+    dataNorm = dataNorm
     dataNorm = dataNorm[['count','count_n']]
-    dataTrain = dataNorm.iloc[0:5]
+    dataTrain = dataNorm.iloc[100:110000]
 
-    iforest = IsolationForest(n_estimators=100, contamination=0.00001, max_samples=5)
+    iforest = IsolationForest(n_estimators=100, contamination=0.00001, max_samples=256)
     iforest.fit(dataTrain)
     clf = iforest.fit(dataTrain)
     prediction = iforest.predict(dataNorm)
@@ -54,8 +54,10 @@ def isolation_forest(filename):
     dataGroup2['prediction'] = prediction
     dataGroup2[['count','prediction']]
 
-    anomalies = dataGroup2[(dataGroup2['prediction'] == -1)]['count'].values
+    # Only the ipdst is output
+    anomalies = dataGroup2[(dataGroup2['prediction'] == -1)]['ipdst'].values
 
-    disk_engine = create_engine('sqlite:///isolation_forest.db')
+    disk_engine = create_engine('sqlite:///app/mod_scan/isolation_forest.db')
     dataGroup2.to_sql('data', disk_engine, if_exists='replace')
-    return dataGroup2[(dataGroup2['prediction'] == -1)]['count'].values
+    print(anomalies)
+    return "DONE"
