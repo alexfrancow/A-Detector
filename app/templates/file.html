@@ -31,19 +31,6 @@
         Plotly.plot('chart',graphs,{});         
     </script>
 
-<script>
-    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-    (function(){
-        $.getJSON(
-            $SCRIPT_ROOT+"/anomaliesTable", // Your AJAX route here
-            function(data) {
-			console.log(data)                // Update the value in your table here
-            }
-        );
-        setTimeout(arguments.callee, 10000);
-    })();
-</script>
-
 {% endblock %}
 
 </footer>
