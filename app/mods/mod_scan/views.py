@@ -31,7 +31,7 @@ from sqlalchemy import create_engine
 import datetime as dt
 
 # Isolation Forest
-from app.mod_scan.isolation_forest import isolation_forest
+from app.mods.mod_scan.isolation_forest import isolation_forest
 
 ################
 #### config ####
@@ -40,7 +40,7 @@ from app.mod_scan.isolation_forest import isolation_forest
 scan_blueprint = Blueprint('scan', __name__, template_folder='templates')
 file_blueprint = Blueprint('scan/file', __name__, template_folder='templates')
 
-UPLOAD_FOLDER = 'app/mod_scan/uploads'
+UPLOAD_FOLDER = 'app/mods/mod_scan/uploads'
 ALLOWED_EXTENSIONS = set(['txt', 'csv'])
 
 app = Flask(__name__)
@@ -85,7 +85,7 @@ def scan():
 @file_blueprint.route('/scan/file', methods= ['GET', 'POST'])
 def file():
     # Import DF from SQLite
-    disk_engine = create_engine('sqlite:///app/mod_scan/isolation_forest.db')
+    disk_engine = create_engine('sqlite:///app/mods/mod_scan/isolation_forest.db')
     df = pd.read_sql_query('SELECT * FROM anomalies', disk_engine)
     dfJSON = df.to_json(orient='index')
 

@@ -20,11 +20,11 @@ app = Flask(__name__, instance_relative_config=True)
 #### blueprints ####
 ####################
 
-from app.views import anomalies_blueprint
-from app.mod_dynamic.views import dynamic_blueprint
-from app.mod_scan.views import scan_blueprint
-from app.mod_scan.views import file_blueprint
-from app.mod_about.views import about_blueprint
+from app.mods.mod_anomalies.views import anomalies_blueprint
+from app.mods.mod_dynamic.views import dynamic_blueprint
+from app.mods.mod_scan.views import scan_blueprint
+from app.mods.mod_scan.views import file_blueprint
+from app.mods.mod_about.views import about_blueprint
 
 # register the blueprints
 app.register_blueprint(anomalies_blueprint)

@@ -39,7 +39,7 @@ def is_public_ip(ip):
 
 def isolation_forest(filename):
     # Import data
-    df = pd.read_csv('app/mod_scan/uploads/'+filename)
+    df = pd.read_csv('app/mods/mod_scan/uploads/'+filename)
     df.columns = ['no', 'time', 'x', 'info', 'ipsrc', 'ipdst', 'proto', 'len']
     df['info'] = "null"
     df.parse_dates=["time"]
@@ -81,7 +81,7 @@ def isolation_forest(filename):
             type.append('private')
     dataGroup3['type'] = type
 
-    disk_engine = create_engine('sqlite:///app/mod_scan/isolation_forest.db')
+    disk_engine = create_engine('sqlite:///app/mods/mod_scan/isolation_forest.db')
 
     # Save all data included anomalies in a new table
     dataGroup2.to_sql('data', disk_engine, if_exists='replace')
