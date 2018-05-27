@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}Anomalies{% endblock %}
+{% block content %}
+
+</script>
+
+  <div id="fullpage">
+    <div class="section " id="section0" >
+      <div id="mapa">
+ <div id="chart"></div>
+        <div id="tabla">
+  {% for table in tables %}
+    {{ table|safe }}
+  {% endfor %}
+        </div>
+      </div>
+       <button onclick="myFunction()">DETALLES</button> 
+    </div>
+
+{% endblock %}
+
+</body>
+{% block footer %}
+<footer>
+        <!-- D3.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+        <!-- jQuery -->
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <!-- Plotly.js -->
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script type="text/javascript">
+        var graphs = {{graphJSON | safe}};
+        Plotly.plot('chart',graphs,{});         
+    </script>
+
+<script>
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    (function(){
+        $.getJSON(
+            $SCRIPT_ROOT+"/anomaliesTable", // Your AJAX route here
+            function(data) {
+			console.log(data)                // Update the value in your table here
+            }
+        );
+        setTimeout(arguments.callee, 10000);
+    })();
+</script>
+
+{% endblock %}
+
+</footer>
