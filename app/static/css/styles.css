@@ -1,4 +1,9 @@
 
+/* Plotly */
+.modebar{
+    display: none !important;
+}
+
 
 body{
     position: relative;
@@ -72,6 +77,11 @@ img {
 
 #divDetails {
     margin-top: 5%;
+}
+
+/* Charts */
+.charts {
+    width:99%
 }
 
 /* Footer */
