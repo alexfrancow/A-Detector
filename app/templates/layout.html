@@ -11,6 +11,8 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
         <link rel="stylesheet" href="{{ url_for('static',filename='css/styles.css') }}">
         <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.min.css') }}" type="text/css" />
+
+        <!-- TABLE CSS -->
         <link rel="stylesheet" href="{{ url_for('static',filename='css/sortable-theme-bootstrap.css') }}">
         <link rel="stylesheet" href="{{ url_for('static',filename='css/sortable-theme-dark.css') }}">
         
@@ -49,7 +51,7 @@
 
     <footer id="footer">
         <div class="navbar-default navbar-fixed-bottom">
-            <p align="center">PoC by @alexfrancow</p>
+            <p align="center"><i class="fas fa-circle-notch fa-spin"></i> Alpha version @alexfrancow</p>
         </div>
         {% block footer %}
         

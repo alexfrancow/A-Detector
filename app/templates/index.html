@@ -5,7 +5,7 @@
 <div id="fullpage">
     <div class="section " id="section0" >
         <div id="mapa">
-            <div id="chart"></div>
+            <div id="map"></div>
             <div id="tabla">
                 {% for table in tables %}
                     {{ table|safe }}
@@ -17,14 +17,11 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-4">
-                <img src="https://adetector.github.io/assets/images/AnomaliesPlot2.png?raw=true" alt="">
+            <div class="col-md-8">
+                <div id="chart"></div>
             </div>
             <div class="col-md-4">
-                <img src="https://adetector.github.io/assets/images/IsolationForest2.png?raw=true" alt="">
-            </div>
-            <div class="col-md-4">
-                <img src="https://adetector.github.io/assets/images/AnomaliesPlot2.png?raw=true" alt="">
+                <div id="chart2"></div>
             </div>
         </div>
         <div class="row">
@@ -61,7 +58,17 @@
 	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script type="text/javascript">
         var graphs = {{graphJSON | safe}};
+        Plotly.plot('map',graphs,{});         
+    </script>
+
+    <script type="text/javascript">
+        var graphs = {{chartJSON | safe}};
         Plotly.plot('chart',graphs,{});         
+    </script>
+    
+    <script type="text/javascript">
+        var graphs = {{chartJSON2 | safe}};
+        Plotly.plot('chart2',graphs,{});         
     </script>
 
 <script>
