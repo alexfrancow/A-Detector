@@ -4,19 +4,19 @@
 
 <div id="fullpage">
     <div class="section " id="section0" >
-      <div id="mapa">
-        <div id="map"></div>
-        <div id="tabla">
-          {% for table in tables %}
-            {{ table|safe }}
-          {% endfor %}
-        </div>
-      </div>
-      <button onclick="myFunction()">DETALLES</button> 
+        <div id="mapa">
+            <div id="map"></div>
+            <div id="tabla">
+                {% for table in tables %}
+                    {{ table|safe }}
+                {% endfor %}
+            </div>
+        </div> 
+        <i class="fas fa-chevron-down" id="displayDetails"></i>
     </div>
 </div>
 
-<div class="container-fluid">
+<div class="container-fluid" id="divDetails">
     <div class="row">
         <div class="col-md-8">
             <div id="chart"></div>
@@ -45,12 +45,12 @@
 
 </div>
 
-
 {% endblock %}
 
 </body>
 {% block footer %}
 <footer>
+
     <!-- D3.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
     <!-- jQuery -->
@@ -58,6 +58,7 @@
     <!-- Plotly.js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     
+    <!-- Plotly Charts -->
     <script type="text/javascript">
         var graphs = {{graphJSON | safe}};
         Plotly.plot('map',graphs,{});         
@@ -73,6 +74,28 @@
         Plotly.plot('chart2',graphs,{});         
     </script> 
 
-{% endblock %}
+    <!-- JS/jQuery Functions -->
+        <!-- divDetails is hidden by jQuery and not with CSS to load the dimensions of the charts first -->
+    <script>
+        $(document).ready(function() {
+            $('#divDetails').hide();
+        });
+    </script>
 
+    <script>
+        $(document).ready(function(){
+            $("#displayDetails").click(function(){
+                $("#divDetails").toggle();
+            });
+        });
+    </script>
+
+    <script>
+        $('#displayDetails').on('click', function(){
+            $('#displayDetails').toggleClass('fa-chevron-down fa-chevron-up');
+        }); 
+
+    </script>
+
+{% endblock %}
 </footer>
