@@ -2,22 +2,55 @@
 {% block title %}Anomalies{% endblock %}
 {% block content %}
 
-  <div id="fullpage">
+<div id="fullpage">
     <div class="section " id="section0" >
-      <div id="mapa">
- <div id="chart"></div>
-        <div id="tabla">
-  {% for table in tables %}
-    {{ table|safe }}
-  {% endfor %}
+        <div id="mapa">
+            <div id="chart"></div>
+            <div id="tabla">
+                {% for table in tables %}
+                    {{ table|safe }}
+                {% endfor %}
+            </div>
         </div>
-      </div>
-       <button onclick="myFunction()">DETALLES</button> 
+        <button onclick="myFunction()">DETALLES</button> 
     </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="https://adetector.github.io/assets/images/AnomaliesPlot2.png?raw=true" alt="">
+            </div>
+            <div class="col-md-4">
+                <img src="https://adetector.github.io/assets/images/IsolationForest2.png?raw=true" alt="">
+            </div>
+            <div class="col-md-4">
+                <img src="https://adetector.github.io/assets/images/AnomaliesPlot2.png?raw=true" alt="">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+    </div>
+
+</div>
 
 {% endblock %}
 
-</body>
+
+
 {% block footer %}
 <footer>
         <!-- D3.js -->

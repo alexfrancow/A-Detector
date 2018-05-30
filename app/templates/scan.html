@@ -2,9 +2,19 @@
 {% block title %}Scan File{% endblock %}
 {% block content %}
 
-<form method="post" enctype="multipart/form-data" action="/scan">
-    <input type="file" name="file">
-    <input type="submit" value="Upload">
-</form>
-
+<div class="container theme-showcase" role="main">
+    <form id="scan" class="col-xs-6 col-md-8 col-lg-10 vcenter" method="post" enctype="multipart/form-data" action="/scan">
+        <div class="form-group">
+                <div class="input-group mb-3">
+                  <div class="custom-file">
+                    <input class="custom-file-input" id="inputGroupFile02" type="file" name="file">
+                    <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
+                  </div>
+                  <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary" value="Upload">Submit</button>
+                  </div>
+                </div>
+              </div>
+    </form>
+</div>
 {% endblock %}

@@ -173,7 +173,7 @@ def file():
     varAnomalies = varAnomalies[['ipdst','proto','time','count']]
 
 
-    html = varAnomalies.to_html(classes="table table sortable-theme-dark")
+    html = varAnomalies.to_html(classes="table-dark")
     html = re.sub(
         r'<table([^>]*)>',
         r'<table\1 data-sortable>',
