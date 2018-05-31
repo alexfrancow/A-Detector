@@ -60,6 +60,14 @@ img {
     border: 0px dashed deeppink;
 }
 
+#advancedButton {
+    cursor: pointer;
+}
+
+.progess {
+    margin-bottom: 5px;
+}
+
 /* File Page */
 #section0 {
     position: relative;

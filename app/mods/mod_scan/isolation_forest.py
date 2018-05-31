@@ -38,7 +38,7 @@ def is_public_ip(ip):
     if ip[0] == 192 and ip[1] == 168: return False
     return True
 
-def isolation_forest(filename, local_ip):
+def isolation_forest(filename, local_ip, if_contamination):
     # Convert data
     print('Converting data..')
     os.system("tshark -r app/mods/mod_scan/uploads/"+filename + " -T fields -e frame.number -e frame.time -e ip.src -e ip.dst -e _ws.col.Protocol -e _ws.col.Info -E header=y -E separator=, -E quote=d -E occurrence=f > app/mods/mod_scan/uploads/test.csv")
@@ -67,7 +67,14 @@ def isolation_forest(filename, local_ip):
 
     # Isolation Forest
     dataTrain = dataNorm.iloc[0:100000]
-    iforest = IsolationForest(n_estimators=100, contamination=0.1)
+
+    if not if_contamination:
+        iforest = IsolationForest(n_estimators=100, contamination=0.01)
+
+    else:
+        if_contamination = float(if_contamination)
+        iforest = IsolationForest(n_estimators=100, contamination=if_contamination)
+
     iforest.fit(dataTrain)
     clf = iforest.fit(dataTrain)
     prediction = iforest.predict(dataNorm)
