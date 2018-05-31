@@ -61,6 +61,7 @@ def allowed_file(filename):
 @scan_blueprint.route('/scan', methods= ['GET', 'POST'])
 def scan():
     if request.method == 'POST':
+        local_ip = request.form['local_ip']
         # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
@@ -75,7 +76,7 @@ def scan():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            isolation_forest(filename)
+            isolation_forest(filename, local_ip)
             #fileurl = filename.split('.')
             #return redirect(url_for("/"+fileurl[0]))
             return redirect("/scan/file")
@@ -94,7 +95,7 @@ def file():
 
     # Anomalies MAP
     mapbox_access_token = 'pk.eyJ1IjoiYWxleGZyYW5jb3ciLCJhIjoiY2pnbHlncDF5MHU4OTJ3cGhpNjE1eTV6ZCJ9.9RoVOSpRXa2JE9j_qnELdw'
-    ips = df[(df['type'] == 'public')]['ipdst'].values
+    ips = df[(df['type'] == 'public')]['ipsrc'].values
     print(ips)
 
     outputLat = []
@@ -174,7 +175,7 @@ def file():
     figMap = dict(data=data, layout=layout)
     graphJSON = json.dumps(figMap, cls=plotly.utils.PlotlyJSONEncoder)
     print(graphJSON)
-    varAnomalies = varAnomalies[['ipdst','proto','time','count']]
+    varAnomalies = varAnomalies[['ipsrc','proto','time','count']]
 
     # Anomalies table
     html = varAnomalies.to_html(classes="table-dark")
@@ -249,7 +250,7 @@ def file():
 
     # Chart2
         # Vars
-    anomaliesP = df2[(df2['prediction'] == -1)]['ipdst']
+    anomaliesP = df2[(df2['prediction'] == -1)]['ipsrc']
     anomaliesC = df2[(df2['prediction'] == -1)]['count']
 
     x = list(anomaliesP)

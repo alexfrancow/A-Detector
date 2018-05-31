@@ -6,6 +6,7 @@
     <form id="scan" class="col-xs-6 col-md-8 col-lg-10 vcenter" method="post" enctype="multipart/form-data" action="/scan">
         <div class="form-group">
             <div class="input-group mb-3">
+		<input type="text" class="col-form-label col-form-label-sm" placeholder="skip local IP?" name="local_ip" pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$">
                 <div class="custom-file">
                     <input class="custom-file-input" id="inputGroupFile02" type="file" name="file">
                     <label class="custom-file-label" for="inputGroupFile02">Choose PCAP file..</label>

@@ -20,6 +20,9 @@ body{
     bottom: 0;
     right: 30%;
     left: 30%;
+    overflow: auto;
+    height: 200px;
+    margin-bottom: 10px;
 }
 
 table{
@@ -94,3 +97,4 @@ img {
     margin-bottom: 0;
     border-width: 1px 0 0;
 }
+

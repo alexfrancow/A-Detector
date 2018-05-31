@@ -38,7 +38,7 @@ def is_public_ip(ip):
     if ip[0] == 192 and ip[1] == 168: return False
     return True
 
-def isolation_forest(filename):
+def isolation_forest(filename, local_ip):
     # Convert data
     print('Converting data..')
     os.system("tshark -r app/mods/mod_scan/uploads/"+filename + " -T fields -e frame.number -e frame.time -e ip.src -e ip.dst -e _ws.col.Protocol -e _ws.col.Info -E header=y -E separator=, -E quote=d -E occurrence=f > app/mods/mod_scan/uploads/test.csv")
@@ -52,9 +52,12 @@ def isolation_forest(filename):
     df['count'] = 1
 
     # Group
-    dataGroup2 = df.groupby(['ipdst','proto']).resample('5S', on='time').sum().reset_index().dropna()
+    dataGroup2 = df.groupby(['ipsrc','proto']).resample('5S', on='time').sum().reset_index().dropna()
     pd.options.display.float_format = '{:,.0f}'.format
-    dataGroup2 = dataGroup2[['ipdst','proto','time','count']]
+
+    # Drop row with IP
+    dataGroup2 = dataGroup2[['ipsrc','proto','time','count']]
+    dataGroup2 = dataGroup2[dataGroup2.ipsrc != local_ip]
 
     # Normalize
     dataNorm = dataGroup2.copy()
@@ -63,8 +66,8 @@ def isolation_forest(filename):
     dataNorm = dataNorm[['count','count_n']]
 
     # Isolation Forest
-    dataTrain = dataNorm.iloc[0:1000]
-    iforest = IsolationForest(n_estimators=100, contamination=0.00001, max_samples=256)
+    dataTrain = dataNorm.iloc[0:100000]
+    iforest = IsolationForest(n_estimators=100, contamination=0.1)
     iforest.fit(dataTrain)
     clf = iforest.fit(dataTrain)
     prediction = iforest.predict(dataNorm)
@@ -74,7 +77,7 @@ def isolation_forest(filename):
     dataGroup3 = dataGroup2[(dataGroup2['prediction'] == -1)]
 
     # Save the anomalies ipdst in a new var
-    anomalies = dataGroup2[(dataGroup2['prediction'] == -1)]['ipdst'].values
+    anomalies = dataGroup2[(dataGroup2['prediction'] == -1)]['ipsrc'].values
 
     # Check anomalies IP type
     ips = anomalies
