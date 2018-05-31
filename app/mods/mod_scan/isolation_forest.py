@@ -12,6 +12,7 @@ Autor: @alexfrancow
 # Standard
 import pandas as pd
 import numpy as np
+import os
 
 # Isolation Forest
 from sklearn.pipeline import Pipeline
@@ -38,9 +39,13 @@ def is_public_ip(ip):
     return True
 
 def isolation_forest(filename):
+    # Convert data
+    print('Converting data..')
+    os.system("tshark -r app/mods/mod_scan/uploads/"+filename + " -T fields -e frame.number -e frame.time -e ip.src -e ip.dst -e _ws.col.Protocol -e _ws.col.Info -E header=y -E separator=, -E quote=d -E occurrence=f > app/mods/mod_scan/uploads/test.csv")
+
     # Import data
-    df = pd.read_csv('app/mods/mod_scan/uploads/'+filename)
-    df.columns = ['no', 'time', 'x', 'info', 'ipsrc', 'ipdst', 'proto', 'len']
+    df = pd.read_csv('app/mods/mod_scan/uploads/test.csv')
+    df.columns = ['no', 'time', 'ipsrc', 'ipdst', 'proto', 'info']
     df['info'] = "null"
     df.parse_dates=["time"]
     df['time'] = pd.to_datetime(df['time'])
@@ -58,7 +63,7 @@ def isolation_forest(filename):
     dataNorm = dataNorm[['count','count_n']]
 
     # Isolation Forest
-    dataTrain = dataNorm.iloc[100:110000]
+    dataTrain = dataNorm.iloc[0:1000]
     iforest = IsolationForest(n_estimators=100, contamination=0.00001, max_samples=256)
     iforest.fit(dataTrain)
     clf = iforest.fit(dataTrain)

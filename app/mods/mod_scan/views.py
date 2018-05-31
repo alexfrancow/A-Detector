@@ -41,7 +41,7 @@ scan_blueprint = Blueprint('scan', __name__, template_folder='templates')
 file_blueprint = Blueprint('scan/file', __name__, template_folder='templates')
 
 UPLOAD_FOLDER = 'app/mods/mod_scan/uploads'
-ALLOWED_EXTENSIONS = set(['txt', 'csv'])
+ALLOWED_EXTENSIONS = set(['txt', 'csv', 'pcap'])
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -84,6 +84,8 @@ def scan():
 
 @file_blueprint.route('/scan/file', methods= ['GET', 'POST'])
 def file():
+    lat = ""
+    lon = ""
     # Import DF from SQLite
     disk_engine = create_engine('sqlite:///app/mods/mod_scan/isolation_forest.db')
     df = pd.read_sql_query('SELECT * FROM anomalies', disk_engine)
@@ -227,7 +229,7 @@ def file():
             title = 'Nº packets'
         ),
         legend=dict(
-            x=0,
+            x=1,
             y=1,
             traceorder='normal',
             font=dict(
@@ -238,7 +240,7 @@ def file():
             bgcolor='#E2E2E2',
             bordercolor='#FFFFFF',
             borderwidth=2
-        ) 
+        )
     )
 
     figChart = dict(data=data, layout=layout)
