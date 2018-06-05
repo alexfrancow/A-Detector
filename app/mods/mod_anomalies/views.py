@@ -163,7 +163,7 @@ def anomalies():
             title = 'Nº packets'
         ),
         legend=dict(
-            x=0,
+            x=1,
             y=1,
             traceorder='normal',
             font=dict(
