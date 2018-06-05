@@ -32,12 +32,18 @@
                 <div class="navbar-header">
                     <a class="navbar-brand" href="#"> <font color="red">A</font>-Detector</a>
                 </div>
+
+<div class="alert alert-dismissible alert-light">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <italic>IP LOCAL: {{ LOCAL_IP }} </strong> <strong>Isolation Forest Contamination: {{ IF_CONTAMINATION }}</italic> 
+</div>
+
             <div class="collapse navbar-collapse"></div>    
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item"><a href="/anomalies" class="nav-link"><i class="fas fa-chart-line"></i> Anomalies</a></li>
-                    <li class="nav-item"><a href="/scan" class="nav-link"><i class="far fa-file-code"></i> Scan it!<p style="font-size:8px;">(new)</p> </a></li>
+                    <li class="nav-item"><a href="/scan" class="nav-link"><i class="far fa-file-code"></i> Scan it! </a></li>
                     <li class="nav-item"><a href="https://adetector.github.io/" class="nav-link" target="_blank"><i class="fas fa-link"></i> About</a></li>
-		    <li class="nav-item"><a href="/scan" class="nav-link"><i class="fas fa-wrench"></i> Config</a></li>
+		    <li class="nav-item"><a href="/config" class="nav-link"><i class="fas fa-wrench"></i> Config</a></li>
                 </ul>
             </div>
             </div>
@@ -50,7 +56,7 @@
 
     <footer id="footer">
         <div class="navbar-default navbar-fixed-bottom">
-            <p align="center"><i class="fas fa-circle-notch fa-spin"></i> Alpha version @alexfrancow</p>
+            <p align="center"><i class="fas fa-circle-notch fa-spin"></i> DEMO version @alexfrancow</p>
         </div>
         {% block footer %}
         

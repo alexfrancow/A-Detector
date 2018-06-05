@@ -22,6 +22,7 @@ df = pd.read_sql_query('SELECT * FROM data', disk_engine)
 df2 = pd.read_sql_query('SELECT * FROM data', disk_engine)
 dfJSON = df.to_json(orient='index')
 
+
 anomalies_blueprint = Blueprint('anomalies', __name__, template_folder='templates')
 
 app = Flask(__name__)
@@ -73,7 +74,7 @@ def anomalies():
 	margin=dict(
         	l=30,
         	r=30,
-        	b=0,
+        	b=40,
         	t=0,
     	),
         showlegend=False,

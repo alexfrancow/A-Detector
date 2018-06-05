@@ -140,7 +140,7 @@ def file():
 	margin=dict(
         	l=30,
         	r=30,
-        	b=0,
+        	b=40,
         	t=0,
     	),
         showlegend=False,

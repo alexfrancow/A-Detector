@@ -12,10 +12,11 @@
                 {% endfor %}
             </div>
         </div>
-        <button onclick="myFunction()">DETALLES</button> 
+        <i class="fas fa-chevron-down" id="displayDetails"></i>
     </div>
+</div>
 
-    <div class="container-fluid">
+    <div class="container-fluid" id="divDetails">
         <div class="row">
             <div class="col-md-8">
                 <div id="chart"></div>
@@ -44,6 +45,15 @@
 
 </div>
 
+<form id="" class="" method="post" enctype="multipart/form-data" action="/anomalies">
+    <div id="divFixed" class="input-group mb-3">
+        <input type="text" class="col-form-label col-form-label-sm" placeholder="IP to block" name="ip_to_block" pattern="((^|\.)((25[0-5])|(2[0-$
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary" value="addRule" id="addRule">Add Rule</button>
+        </div>
+    </div>
+</form>
+
 {% endblock %}
 
 
@@ -70,7 +80,6 @@
         var graphs = {{chartJSON2 | safe}};
         Plotly.plot('chart2',graphs,{});         
     </script>
-
 <script>
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     (function(){
@@ -83,6 +92,29 @@
         setTimeout(arguments.callee, 10000);
     })();
 </script>
+
+    <!-- JS/jQuery Functions -->
+        <!-- divDetails is hidden by jQuery and not with CSS to load the dimensions of the charts first -->
+    <script>
+        $(document).ready(function() {
+            $('#divDetails').hide();
+        });
+    </script>
+
+    <script>
+        $(document).ready(function(){
+            $("#displayDetails").click(function(){
+                $("#divDetails").toggle();
+            });
+        });
+    </script>
+
+    <script>
+        $('#displayDetails').on('click', function(){
+            $('#displayDetails').toggleClass('fa-chevron-down fa-chevron-up');
+        });
+
+    </script>
 
 {% endblock %}
 

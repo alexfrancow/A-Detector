@@ -22,7 +22,7 @@ body{
     left: 30%;
     overflow: auto;
     height: 200px;
-    margin-bottom: 10px;
+    margin-bottom: 50px;
 }
 
 table{
@@ -76,18 +76,28 @@ img {
 #displayDetails {
     font-size: 40px;
     position: absolute;
-    bottom: -10%;
+    bottom: -5%;
     right: 50%;
     z-index: 1040;
 }
 
 #displayDetails:hover {
     cursor: pointer;
-    bottom: -11%;
+    bottom: -6%;
 }
 
 #divDetails {
     margin-top: 5%;
+}
+
+/* Anomalies page */
+
+#divFixed {
+    position:fixed;
+    width:100%;
+    bottom:0;
+    margin-left:3%;
+    height: whatever 
 }
 
 /* Charts */
@@ -99,7 +109,7 @@ img {
 .navbar-fixed-bottom {
     position: fixed;
     right: 0;
-    left: 0;
+    left: 70%;
     z-index: 1030;
     bottom: 0;
     margin-bottom: 0;
