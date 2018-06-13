@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 
-from flask import Flask, render_template
+from flask import Flask, jsonify, Blueprint, render_template, request, flash, redirect, url_for
 import json
 import plotly
 import plotly.plotly as py
@@ -27,8 +27,14 @@ anomalies_blueprint = Blueprint('anomalies', __name__, template_folder='template
 
 app = Flask(__name__)
 
-@anomalies_blueprint.route('/anomalies')
+@anomalies_blueprint.route('/', methods= ['GET', 'POST'])
+@anomalies_blueprint.route('/anomalies', methods= ['GET', 'POST'])
 def anomalies():
+    ban_ip = None
+    if request.method == 'POST':
+        ban_ip = request.form['ip_to_block']
+        print(ban_ip)
+        
     mapbox_access_token = 'pk.eyJ1IjoiYWxleGZyYW5jb3ciLCJhIjoiY2pnbHlncDF5MHU4OTJ3cGhpNjE1eTV6ZCJ9.9RoVOSpRXa2JE9j_qnELdw'
     #ips = ['157.240.21.35','23.253.135.79','104.244.42.193', '213.60.47.49']
     ips = ['92.53.104.78']
@@ -213,7 +219,7 @@ def anomalies():
     chartJSON2 = json.dumps(figChart2, cls=plotly.utils.PlotlyJSONEncoder)
 
     #return render_template('index.html', graphJSON=graphJSON, tables=[varAnomalies.to_html(classes="table sortable-theme-dark")], titles=['ipdst', 'proto'])
-    return render_template('index.html', graphJSON=graphJSON, tables=html, chartJSON=chartJSON, chartJSON2=chartJSON2)
+    return render_template('index.html', graphJSON=graphJSON, tables=html, chartJSON=chartJSON, chartJSON2=chartJSON2, ban_ip=ban_ip)
 
 if __name__ == '__main__':
     app.run(debug= True)

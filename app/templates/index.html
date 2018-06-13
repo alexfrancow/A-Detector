@@ -51,6 +51,9 @@
         <div class="input-group-append">
             <button type="submit" class="btn btn-primary btn-sm" value="addRule" id="addRule">Add Rule</button>
             <button type="submit" class="btn btn-warning btn-sm" value="raAnalyze" id="reAnalyze">Re-Analyze LOG</button>
+            {% if ban_ip != None %}
+                <button type="button" id="rule_info" class="btn btn-success btn-sm">Success {{ ban_ip }}</button>
+            {% endif %}
         </div>
     </div>
 </form>
@@ -114,7 +117,12 @@
         $('#displayDetails').on('click', function(){
             $('#displayDetails').toggleClass('fa-chevron-down fa-chevron-up');
         });
+    </script>
 
+    <script>
+        setTimeout(function() {
+            $('#rule_info').hide()
+        }, 3000);
     </script>
 
 {% endblock %}
