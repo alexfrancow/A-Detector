@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 
-from flask import Flask, render_template
+from flask import Flask, jsonify, Blueprint, render_template, request, flash, redirect, url_for
 import json
 import plotly
 import plotly.plotly as py
@@ -19,14 +19,22 @@ import datetime as dt
 
 disk_engine = create_engine('sqlite:///test.db')
 df = pd.read_sql_query('SELECT * FROM data', disk_engine)
+df2 = pd.read_sql_query('SELECT * FROM data', disk_engine)
 dfJSON = df.to_json(orient='index')
+
 
 anomalies_blueprint = Blueprint('anomalies', __name__, template_folder='templates')
 
 app = Flask(__name__)
 
-@anomalies_blueprint.route('/anomalies')
+@anomalies_blueprint.route('/', methods= ['GET', 'POST'])
+@anomalies_blueprint.route('/anomalies', methods= ['GET', 'POST'])
 def anomalies():
+    ban_ip = None
+    if request.method == 'POST':
+        ban_ip = request.form['ip_to_block']
+        print(ban_ip)
+        
     mapbox_access_token = 'pk.eyJ1IjoiYWxleGZyYW5jb3ciLCJhIjoiY2pnbHlncDF5MHU4OTJ3cGhpNjE1eTV6ZCJ9.9RoVOSpRXa2JE9j_qnELdw'
     #ips = ['157.240.21.35','23.253.135.79','104.244.42.193', '213.60.47.49']
     ips = ['92.53.104.78']
@@ -72,7 +80,7 @@ def anomalies():
 	margin=dict(
         	l=30,
         	r=30,
-        	b=0,
+        	b=40,
         	t=0,
     	),
         showlegend=False,
@@ -111,7 +119,7 @@ def anomalies():
     varAnomalies = varAnomalies[['ipdst','proto','time','count']]
 
 
-    html = varAnomalies.to_html(classes="table table sortable-theme-dark")
+    html = varAnomalies.to_html(classes="table-dark")
     html = re.sub(
         r'<table([^>]*)>',
         r'<table\1 data-sortable>',
@@ -120,8 +128,98 @@ def anomalies():
 
     html = html.split('\n')
 
+
+    # Chart
+    df3 = df2.sort_values(by=['time'])
+    #Normal Traffic
+    nor = df3[(df3['prediction'] == 1)]['count']
+    #Anomalies
+    ano = df3[(df3['prediction'] == -1)]['count']
+
+    normal = go.Scatter(
+        x = df3[(df3['prediction'] == 1)]['time'],
+        y = nor,
+        mode = "lines",
+        name = "Normal Traffic"
+    )
+
+
+    anomalies = dict(
+        x=df3[(df3['prediction'] == -1)]['time'],
+        y=ano,
+        name = "Anomalies",
+        mode = 'markers',
+        marker=Marker(
+                size=7,
+                symbol= "circle",
+                color='rgb(255, 0, 0)'
+            ),
+        opacity = 0.8)
+
+    data = [normal, anomalies]
+
+    layout = dict(
+        title='Peticiones totales por tiempo',
+        xaxis=dict(
+            #title = 'Date',
+            #rangeslider=dict(),
+            type='date'
+        ),
+        yaxis=dict(
+            title = 'Nº packets'
+        ),
+        legend=dict(
+            x=1,
+            y=1,
+            traceorder='normal',
+            font=dict(
+                family='sans-serif',
+                size=12,
+                color='#000'
+            ),
+            bgcolor='#E2E2E2',
+            bordercolor='#FFFFFF',
+            borderwidth=2
+        ) 
+    )
+
+    figChart = dict(data=data, layout=layout)
+    chartJSON = json.dumps(figChart, cls=plotly.utils.PlotlyJSONEncoder)
+
+
+    # Chart 2
+    anomaliesP = df2[(df2['prediction'] == -1)]['ipdst']
+    anomaliesC = df2[(df2['prediction'] == -1)]['count']
+
+    x = list(anomaliesP)
+    y = list(anomaliesC)
+    print(x)
+    print(y)
+
+    labels = x
+    values = y
+
+    data = [go.Bar(
+                x=x,
+                y=y,
+                marker=dict(
+                    color='rgb(158,202,225)',
+                    line=dict(
+                        color='rgb(8,48,107)',
+                        width=1.5,
+                    )
+                ),
+                opacity=0.6
+            )]
+    layout = dict(
+            title = 'Peticiones totales',
+    )
+
+    figChart2 = dict(data=data, layout=layout)
+    chartJSON2 = json.dumps(figChart2, cls=plotly.utils.PlotlyJSONEncoder)
+
     #return render_template('index.html', graphJSON=graphJSON, tables=[varAnomalies.to_html(classes="table sortable-theme-dark")], titles=['ipdst', 'proto'])
-    return render_template('index.html', graphJSON=graphJSON, tables=html)
+    return render_template('index.html', graphJSON=graphJSON, tables=html, chartJSON=chartJSON, chartJSON2=chartJSON2, ban_ip=ban_ip)
 
 if __name__ == '__main__':
     app.run(debug= True)

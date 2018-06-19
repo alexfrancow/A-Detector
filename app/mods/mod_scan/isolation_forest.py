@@ -12,6 +12,7 @@ Autor: @alexfrancow
 # Standard
 import pandas as pd
 import numpy as np
+import os
 
 # Isolation Forest
 from sklearn.pipeline import Pipeline
@@ -37,19 +38,26 @@ def is_public_ip(ip):
     if ip[0] == 192 and ip[1] == 168: return False
     return True
 
-def isolation_forest(filename):
+def isolation_forest(filename, local_ip, if_contamination):
+    # Convert data
+    print('Converting data..')
+    os.system("tshark -r app/mods/mod_scan/uploads/"+filename + " -T fields -e frame.number -e frame.time -e ip.src -e ip.dst -e _ws.col.Protocol -e _ws.col.Info -E header=y -E separator=, -E quote=d -E occurrence=f > app/mods/mod_scan/uploads/test.csv")
+
     # Import data
-    df = pd.read_csv('app/mods/mod_scan/uploads/'+filename)
-    df.columns = ['no', 'time', 'x', 'info', 'ipsrc', 'ipdst', 'proto', 'len']
+    df = pd.read_csv('app/mods/mod_scan/uploads/test.csv')
+    df.columns = ['no', 'time', 'ipsrc', 'ipdst', 'proto', 'info']
     df['info'] = "null"
     df.parse_dates=["time"]
     df['time'] = pd.to_datetime(df['time'])
     df['count'] = 1
 
     # Group
-    dataGroup2 = df.groupby(['ipdst','proto']).resample('5S', on='time').sum().reset_index().dropna()
+    dataGroup2 = df.groupby(['ipsrc','proto']).resample('5S', on='time').sum().reset_index().dropna()
     pd.options.display.float_format = '{:,.0f}'.format
-    dataGroup2 = dataGroup2[['ipdst','proto','time','count']]
+
+    # Drop row with IP
+    dataGroup2 = dataGroup2[['ipsrc','proto','time','count']]
+    dataGroup2 = dataGroup2[dataGroup2.ipsrc != local_ip]
 
     # Normalize
     dataNorm = dataGroup2.copy()
@@ -58,8 +66,15 @@ def isolation_forest(filename):
     dataNorm = dataNorm[['count','count_n']]
 
     # Isolation Forest
-    dataTrain = dataNorm.iloc[100:110000]
-    iforest = IsolationForest(n_estimators=100, contamination=0.00001, max_samples=256)
+    dataTrain = dataNorm.iloc[0:100000]
+
+    if not if_contamination:
+        iforest = IsolationForest(n_estimators=100, contamination=0.01)
+
+    else:
+        if_contamination = float(if_contamination)
+        iforest = IsolationForest(n_estimators=100, contamination=if_contamination)
+
     iforest.fit(dataTrain)
     clf = iforest.fit(dataTrain)
     prediction = iforest.predict(dataNorm)
@@ -69,7 +84,7 @@ def isolation_forest(filename):
     dataGroup3 = dataGroup2[(dataGroup2['prediction'] == -1)]
 
     # Save the anomalies ipdst in a new var
-    anomalies = dataGroup2[(dataGroup2['prediction'] == -1)]['ipdst'].values
+    anomalies = dataGroup2[(dataGroup2['prediction'] == -1)]['ipsrc'].values
 
     # Check anomalies IP type
     ips = anomalies

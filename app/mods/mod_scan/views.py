@@ -41,7 +41,7 @@ scan_blueprint = Blueprint('scan', __name__, template_folder='templates')
 file_blueprint = Blueprint('scan/file', __name__, template_folder='templates')
 
 UPLOAD_FOLDER = 'app/mods/mod_scan/uploads'
-ALLOWED_EXTENSIONS = set(['txt', 'csv'])
+ALLOWED_EXTENSIONS = set(['txt', 'csv', 'pcap'])
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -61,7 +61,9 @@ def allowed_file(filename):
 @scan_blueprint.route('/scan', methods= ['GET', 'POST'])
 def scan():
     if request.method == 'POST':
-        # check if the post request has the file part
+        local_ip = request.form['local_ip']
+        if_contamination = request.form['if_contamination']
+	# check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
@@ -75,7 +77,7 @@ def scan():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            isolation_forest(filename)
+            isolation_forest(filename, local_ip, if_contamination)
             #fileurl = filename.split('.')
             #return redirect(url_for("/"+fileurl[0]))
             return redirect("/scan/file")
@@ -84,13 +86,17 @@ def scan():
 
 @file_blueprint.route('/scan/file', methods= ['GET', 'POST'])
 def file():
+    lat = ""
+    lon = ""
     # Import DF from SQLite
     disk_engine = create_engine('sqlite:///app/mods/mod_scan/isolation_forest.db')
     df = pd.read_sql_query('SELECT * FROM anomalies', disk_engine)
+    df2 = pd.read_sql_query('SELECT * FROM data', disk_engine)
     dfJSON = df.to_json(orient='index')
 
+    # Anomalies MAP
     mapbox_access_token = 'pk.eyJ1IjoiYWxleGZyYW5jb3ciLCJhIjoiY2pnbHlncDF5MHU4OTJ3cGhpNjE1eTV6ZCJ9.9RoVOSpRXa2JE9j_qnELdw'
-    ips = df[(df['type'] == 'public')]['ipdst'].values
+    ips = df[(df['type'] == 'public')]['ipsrc'].values
     print(ips)
 
     outputLat = []
@@ -134,7 +140,7 @@ def file():
 	margin=dict(
         	l=30,
         	r=30,
-        	b=0,
+        	b=40,
         	t=0,
     	),
         showlegend=False,
@@ -167,13 +173,13 @@ def file():
     )
 
     varAnomalies = df[(df['prediction'] == -1)]
-    fig = dict(data=data, layout=layout)
-    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    figMap = dict(data=data, layout=layout)
+    graphJSON = json.dumps(figMap, cls=plotly.utils.PlotlyJSONEncoder)
     print(graphJSON)
-    varAnomalies = varAnomalies[['ipdst','proto','time','count']]
+    varAnomalies = varAnomalies[['ipsrc','proto','time','count']]
 
-
-    html = varAnomalies.to_html(classes="table table sortable-theme-dark")
+    # Anomalies table
+    html = varAnomalies.to_html(classes="table-dark")
     html = re.sub(
         r'<table([^>]*)>',
         r'<table\1 data-sortable>',
@@ -182,8 +188,101 @@ def file():
 
     html = html.split('\n')
 
+
+    # Charts
+    # Vars
+        # Time order
+    df3 = df2.sort_values(by=['time'])
+        #Normal Traffic
+    nor = df3[(df3['prediction'] == 1)]['count']
+        #Anomalies
+    ano = df3[(df3['prediction'] == -1)]['count']
+
+
+    normal = go.Scatter(
+        x = df3[(df3['prediction'] == 1)]['time'],
+        y = nor,
+        mode = "lines",
+        name = "Normal Traffic"
+    )
+
+    anomalies = dict(
+        x=df3[(df3['prediction'] == -1)]['time'],
+        y=ano,
+        name = "Anomalies",
+        mode = 'markers',
+        marker=Marker(
+                size=7,
+                symbol= "circle",
+                color='rgb(255, 0, 0)'
+            ),
+        opacity = 0.8)
+
+    data = [normal, anomalies]
+
+    layout = dict(
+        title='Peticiones totales por tiempo',
+        xaxis=dict(
+            #title = 'Date',
+            #rangeslider=dict(),
+            type='date'
+        ),
+        yaxis=dict(
+            title = 'Nº packets'
+        ),
+        legend=dict(
+            x=1,
+            y=1,
+            traceorder='normal',
+            font=dict(
+                family='sans-serif',
+                size=12,
+                color='#000'
+            ),
+            bgcolor='#E2E2E2',
+            bordercolor='#FFFFFF',
+            borderwidth=2
+        )
+    )
+
+    figChart = dict(data=data, layout=layout)
+    chartJSON = json.dumps(figChart, cls=plotly.utils.PlotlyJSONEncoder)
+    print(chartJSON)
+
+    # Chart2
+        # Vars
+    anomaliesP = df2[(df2['prediction'] == -1)]['ipsrc']
+    anomaliesC = df2[(df2['prediction'] == -1)]['count']
+
+    x = list(anomaliesP)
+    y = list(anomaliesC)
+    print(x)
+    print(y)
+
+    labels = x
+    values = y
+
+    data = [go.Bar(
+                x=x,
+                y=y,
+                marker=dict(
+                    color='rgb(158,202,225)',
+                    line=dict(
+                        color='rgb(8,48,107)',
+                        width=1.5,
+                    )
+                ),
+                opacity=0.6
+            )]
+    layout = dict(
+        title='Peticiones totales por IP',
+    )
+
+    figChart2 = dict(data=data, layout=layout)
+    chartJSON2 = json.dumps(figChart2, cls=plotly.utils.PlotlyJSONEncoder)
+
     #return render_template('index.html', graphJSON=graphJSON, tables=[varAnomalies.to_html(classes="table sortable-theme-dark")], titles=['ipdst', 'proto'])
-    return render_template('file.html', graphJSON=graphJSON, tables=html)
+    return render_template('file.html', graphJSON=graphJSON, tables=html, chartJSON=chartJSON, chartJSON2=chartJSON2)
 
 
 if __name__ == "__main__":

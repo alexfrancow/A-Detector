@@ -1,23 +1,31 @@
 
+/* Plotly */
+.modebar{
+    display: none !important;
+}
 
-  body{
+
+body{
     position: relative;
     background-color: #EBECED;
-  }
+}
 
-  #mapa{
+#mapa{
     position: relative;
     display: block;
-  }
+}
 
-  #tabla{
+#tabla{
     position: absolute;
     bottom: 0;
     right: 30%;
     left: 30%;
-  }
+    overflow: auto;
+    height: 200px;
+    margin-bottom: 50px;
+}
 
-  table{
+table{
     width: 100%;
     height: 100%;
     text-align: center;
@@ -25,4 +33,86 @@
     border-collapse: collapse;
     border-width: 1px;
     margin-bottom: 10px;
-  }
+}
+
+img {
+    width:100%
+}
+
+/* Scan Page */
+#scan {
+    border-style: dashed;
+    padding: 3%;
+}
+
+.container {
+    margin-top: 5%;
+    position: relative;
+    height: 14rem;
+    border: 2px dashed grey;
+}
+
+.vcenter {
+    position: absolute;
+    top: 50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    border: 0px dashed deeppink;
+}
+
+#advancedButton {
+    cursor: pointer;
+}
+
+.progess {
+    margin-bottom: 5px;
+}
+
+/* File Page */
+#section0 {
+    position: relative;
+}
+
+#displayDetails {
+    font-size: 40px;
+    position: absolute;
+    bottom: -5%;
+    right: 50%;
+    z-index: 1040;
+}
+
+#displayDetails:hover {
+    cursor: pointer;
+    bottom: -6%;
+}
+
+#divDetails {
+    margin-top: 5%;
+}
+
+/* Anomalies page */
+
+#divFixed {
+    position:fixed;
+    width:100%;
+    bottom:0;
+    margin-left:3%;
+    height: whatever 
+}
+
+/* Charts */
+.charts {
+    width:99%
+}
+
+/* Footer */
+.navbar-fixed-bottom {
+    position: fixed;
+    right: 0;
+    left: 70%;
+    z-index: 1030;
+    bottom: 0;
+    margin-bottom: 0;
+    border-width: 1px 0 0;
+}
+

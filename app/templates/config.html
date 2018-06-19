@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block title %}Scan File{% endblock %}
+{% block content %}
+
+<div class="alert alert-dismissible alert-warning">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <h4 class="alert-heading"><i class="fas fa-wrench"></i> Warning!</h4>
+  <p class="mb-0">Config page is under development.</a>.</p>
+</div>
+
+<div class="container" role="main">
+    <form id="scan" class="col-xs-6 col-md-8 col-lg-10 vcenter" method="post" enctype="multipart/form-data" action="/config">
+        <div class="form-group">
+	<div class="input-group mb-3"></div>
+	    <p>Suricata JSON</p>
+            <input type="text" class="col-form-label col-form-label-sm" placeholder="/home/suricata/log.json" name="suricata_json" id="suricata_json">
+	    <p>Local IP </p>
+            <input type="text" class="col-form-label col-form-label-sm" placeholder="192.168.1.4" name="local_ip" id="local_ip">
+	    <p>Isolation Forest Contamination: <i class="fas fa-question-circle"></i></p> 
+	    <input type="text" class="col-form-label col-form-label-sm" placeholder="Default: 0.01, Max: 1" name="if_contamination" id="if_contamination">
+	    <button type="submit" class="btn btn-primary">Submit</button>
+	</div>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}
+
+
